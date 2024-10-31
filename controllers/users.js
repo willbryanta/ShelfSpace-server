@@ -8,7 +8,7 @@ router.put("/:userId", async (req, res) => {
 	try {
 		const targetUser = await User.findById(req.params.userId)
 		const nameInDatabase = await User.findOne({ username: req.body.username })
-		if (!targetUser.isOwner) {
+		if (!targetUser.isOwner(req.body.user)) {
 			return res.status(403).json({
 				error: "Oops! It doesn't look like that belongs to you!",
 			})
@@ -22,6 +22,7 @@ router.put("/:userId", async (req, res) => {
 		targetUser.username = req.body.username
 		targetUser.hashedPassword = bcrypt.hashSync(req.body.password, SALT_LENGTH)
 		await targetUser.save()
+		return res.status(200).json({ targetUser })
 	} catch (error) {
 		res.status(500).json(error.message)
 	}
