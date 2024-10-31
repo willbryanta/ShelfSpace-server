@@ -38,4 +38,22 @@ router.post("/signup", async (req, res) => {
 	}
 })
 
+router.post("/signin", async (req, res) => {
+	try {
+		const user = await User.findOne({ username: req.body.username })
+
+		if (user && bcrypt.compareSync(req.body.password, user.hashedPassword)) {
+			const token = jwt.sign(
+				{ username: user.username, _id: user._id },
+				process.env.JWT_SECRET
+			)
+			res.status(200).json({ token })
+		} else {
+			res.status(401).json({ error: "Invalid username or password." })
+		}
+	} catch {
+		res.status(401).json({ error: error.message })
+	}
+})
+
 module.exports = router
