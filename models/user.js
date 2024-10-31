@@ -6,10 +6,12 @@ const listSchema = new mongoose.Schema(
 			type: String,
 			required: true,
 		},
-		items: [{
-			type: mongoose.Schema.Types.ObjectId,
-			ref: "LibraryItem",
-		}],
+		items: [
+			{
+				type: mongoose.Schema.Types.ObjectId,
+				ref: "LibraryItem",
+			},
+		],
 	},
 	{ timestamps: true }
 )
@@ -33,7 +35,14 @@ const userSchema = new mongoose.Schema(
 		],
 		lists: [listSchema],
 	},
-	{ timestamps: true }
+	{
+		timestamps: true,
+		method: {
+			isOwner: function (User) {
+				return this._id.equals(User._id)
+			},
+		},
+	}
 )
 
 userSchema.set("toJSON", {
