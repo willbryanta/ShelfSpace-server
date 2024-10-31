@@ -16,7 +16,14 @@ const reviewSchema = new mongoose.Schema(
 			ref: "User",
 		},
 	},
-	{ timestamps: true }
+	{
+		timestamps: true,
+		method: {
+			isOwner: function (User) {
+				return this.author.equals(User._id)
+			},
+		},
+	}
 )
 
 module.exports = mongoose.model("Review", reviewSchema)
