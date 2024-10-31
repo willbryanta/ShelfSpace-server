@@ -1,11 +1,13 @@
 //----------------------- DB Setup
-const mongoose = require('mongoose')
-require('dotenv').config()
+const mongoose = require("mongoose")
+require("dotenv").config()
 mongoose.connect(process.env.MONGODB_URI)
 
 //----------------------- Module Imports
-const express = require('express')
+const express = require("express")
 const app = express()
+const usersRouter = require("./controllers/users")
+
 /*
 IMPORT CONTROLLERS GO HERE
     Auth
@@ -17,6 +19,7 @@ IMPORT CONTROLLERS GO HERE
 //----------------------- Server Config
 app.listen(PORT) // get PORT from .env
 app.use(express.json())
+app.use("/users", usersRouter)
 /*
 USE CONTROLLERS GO HERE
     Auth
@@ -26,7 +29,6 @@ USE CONTROLLERS GO HERE
 */
 
 //----------------------- Routing
-app.get('/', (req, res) => {
-    res.status(200).send('Hello World')
+app.get("/", (req, res) => {
+	res.status(200).send("Hello World")
 })
-
