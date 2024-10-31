@@ -4,6 +4,23 @@ const bcrypt = require("bcrypt")
 const User = require("../models/user")
 SALT_LENGTH = 12
 
+router.get("/:userId", async (req, res) => {
+	try {
+		const userProfile = await User.findById(req.params.userId)
+		if (!userProfile) {
+			res.status(404)
+			throw new Ettor("User not found")
+		}
+		res.status(200).json(userProfile)
+	} catch (error) {
+		if (res.statusCode === 404) {
+			res.json({ error: error.message })
+		} else {
+			res.status(500).json({ error: error.message })
+		}
+	}
+})
+
 router.put("/:userId", async (req, res) => {
 	try {
 		const targetUser = await User.findById(req.params.userId)
