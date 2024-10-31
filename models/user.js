@@ -13,14 +13,7 @@ const listSchema = new mongoose.Schema(
 			},
 		],
 	},
-	{
-		timestamps: true,
-		method: {
-			isOwner: function (User) {
-				return this._id.equals(User._id)
-			},
-		},
-	}
+	{ timestamps: true }
 )
 
 const userSchema = new mongoose.Schema(
