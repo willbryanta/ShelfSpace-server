@@ -17,7 +17,7 @@ IMPORT CONTROLLERS GO HERE
 */
 
 //----------------------- Server Config
-app.listen(PORT) // get PORT from .env
+app.listen(process.env.PORT) // get PORT from .env
 app.use(express.json())
 app.use("/users", usersRouter)
 /*
