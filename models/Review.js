@@ -16,7 +16,7 @@ const reviewSchema = new mongoose.Schema(
 			ref: "User",
 		},
 	},
-	{
+  {
 		timestamps: true,
 		method: {
 			isOwner: function (User) {
