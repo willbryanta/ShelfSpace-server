@@ -1,8 +1,12 @@
 const express = require("express")
+const authenticateUser = require("../middleware/authenticateUser.js")
+const User = require("../models/user.js")
 const router = express.Router()
 const bcrypt = require("bcrypt")
 const User = require("../models/user")
 SALT_LENGTH = 12
+
+router.use(authenticateUser)
 
 router.get("/:userId", async (req, res) => {
 	try {
@@ -54,6 +58,31 @@ router.put("/:userId", async (req, res) => {
 		return res.status(200).json({ targetUser })
 	} catch (error) {
 		res.status(500).json(error.message)
+	}
+})
+
+router.post("/:userId/lists", async (req, res) => {
+	try {
+		const targetUser = await User.findById(req.params.userId)
+
+		if (!targetUser) {
+			return res.status(404).json({ error: "user not found!" })
+		}
+
+		if (!targetUser.isOwner(req.user)) {
+			return res.status(403).json({
+				error: " You don't have permission to create this new list!",
+			})
+		}
+
+		targetUser.lists.push(req.body.newList)
+		await targetUser.save()
+
+		return res.status(201).json(targetUser.lists)
+	} catch (error) {
+		return res
+			.status(500)
+			.json({ error: " The server fell down, try again later!" })
 	}
 })
 
