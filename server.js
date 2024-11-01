@@ -7,26 +7,13 @@ mongoose.connect(process.env.MONGODB_URI)
 const express = require("express")
 const app = express()
 const authRouter = require("./controllers/auth")
-
-/*
-IMPORT CONTROLLERS GO HERE
-    Auth
-    Reviews
-    Users
-    Library
-*/
+const usersRouter = require("./controllers/users")
 
 //----------------------- Server Config
 app.listen(process.env.PORT) // get PORT from .env
 app.use(express.json())
 app.use("/auth", authRouter)
-/*
-USE CONTROLLERS GO HERE
-    Auth
-    Reviews
-    Users
-    Library
-*/
+app.use("/users", usersRouter)
 
 //----------------------- Routing
 app.get("/", (req, res) => {
