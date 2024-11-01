@@ -1,6 +1,6 @@
 const express = require("express")
 const authenticateUser = require("../middleware/authenticateUser.js")
-const User = require("../models/user.js")
+const User = require("../models/User.js")
 const LibraryItem = require("../models/LibraryItem.js")
 const router = express.Router()
 
@@ -18,3 +18,20 @@ router.get("/", (req, res) => {
 		return res.status(500).json(error.message)
 	}
 })
+
+router.post("/", authenticateUser, async (req, res) => {
+	try {
+		const createdLibraryItem = await LibraryItem.create({
+			name: req.body.name,
+			description: req.body.description,
+			publicationDate: req.body.publicationDate,
+			author: req.body.author,
+			reviews: [],
+		})
+		res.status(201).json(createdLibraryItem)
+	} catch (error) {
+		res.status(500).json({ error: error.message })
+	}
+})
+
+module.exports = router
