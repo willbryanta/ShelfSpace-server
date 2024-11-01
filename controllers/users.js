@@ -3,7 +3,6 @@ const authenticateUser = require("../middleware/authenticateUser.js")
 const User = require("../models/user.js")
 const router = express.Router()
 const bcrypt = require("bcrypt")
-const User = require("../models/user")
 SALT_LENGTH = 12
 
 router.use(authenticateUser)
