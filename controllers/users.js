@@ -28,4 +28,21 @@ router.put("/:userId", async (req, res) => {
 	}
 })
 
+router.put("/:userId/lists/:listId", async (req, res) => {
+	try {
+		const targetUser = await User.findById(req.params.userId)
+		if (!targetUser.isOwner(req.body.user)) {
+			return res.status(403).json({
+				error: "Oops! It doesn't look like that belongs to you!",
+			})
+		}
+		targetUser.lists.pull({ _id: req.params.listId })
+		targetUser.lists.push(req.params.updatedList)
+		await targetUser.save()
+		res.status(200).json({targetUser})
+	} catch (error) {
+		res.status(500).json(error.message)
+	}
+})
+
 module.exports = router
