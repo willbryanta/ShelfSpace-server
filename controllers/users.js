@@ -1,6 +1,7 @@
 const express = require("express")
 const authenticateUser = require("../middleware/authenticateUser.js")
-const User = require("../models/user.js")
+const User = require("../models/User")
+const Review = require("../models/Review")
 const router = express.Router()
 const bcrypt = require("bcrypt")
 SALT_LENGTH = 12
@@ -31,6 +32,34 @@ router.get("/:userId", async (req, res) => {
 	}
 })
 
+router.get("/:userId/lists/:listId", async (req, res) => {
+	try {
+		const targetUser = await User.findById(req.params.userId)
+
+		if (!targetUser) {
+			return res.status(404).json({ error: "user not found!" })
+		}
+
+		if (!targetUser.isOwner(req.user)) {
+			return res.status(403).json({
+				error: "Oops! It doesn't look like that belongs to you!",
+			})
+		}
+		const targetList = targetUser.lists.find(
+			(list) => list._id.toString() === req.params.listId
+		)
+
+		if (!targetList) {
+			return res.status(404).json({ error: "List not found!" })
+		}
+
+		// Return the target list
+		return res.status(200).json(targetList)
+	} catch (error) {
+		return res.status(500).json(error)
+	}
+})
+
 router.put("/:userId", async (req, res) => {
 	try {
 		const targetUser = await User.findById(req.params.userId)
@@ -45,7 +74,7 @@ router.put("/:userId", async (req, res) => {
 				error: "Oops! It doesn't look like that belongs to you!",
 			})
 		}
-		if (nameInDatabase && nameInDatabase._id !== targetUser._id) {
+		if (nameInDatabase && !nameInDatabase._id.equals(targetUser._id)) {
 			return res.status(403).json({
 				error:
 					"That username is already taken. How about trying a different one?",
