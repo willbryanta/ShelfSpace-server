@@ -42,7 +42,7 @@ Temporary Items
 /log/*
 *Zone.Identifier
 
-# ignore Rails cache files
+# Ignore Rails cache files
 tmp/
 log/
 
@@ -55,3 +55,6 @@ node_modules/
 
 .byebug_history
 .eslintcache
+
+# Ignore dev and test files
+seeds.js
