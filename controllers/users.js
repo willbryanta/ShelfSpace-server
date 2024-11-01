@@ -1,6 +1,7 @@
 const express = require("express")
 const authenticateUser = require("../middleware/authenticateUser.js")
-const User = require("../models/user.js")
+const User = require("../models/User")
+const Review = require("../models/Review")
 const router = express.Router()
 const bcrypt = require("bcrypt")
 SALT_LENGTH = 12
@@ -45,7 +46,7 @@ router.put("/:userId", async (req, res) => {
 				error: "Oops! It doesn't look like that belongs to you!",
 			})
 		}
-		if (nameInDatabase && nameInDatabase._id !== targetUser._id) {
+		if (nameInDatabase && !nameInDatabase._id.equals(targetUser._id)) {
 			return res.status(403).json({
 				error:
 					"That username is already taken. How about trying a different one?",

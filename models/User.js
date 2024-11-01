@@ -37,7 +37,7 @@ const userSchema = new mongoose.Schema(
 	},
 	{
 		timestamps: true,
-		method: {
+		methods: {
 			isOwner: function (User) {
 				return this._id.equals(User._id)
 			},

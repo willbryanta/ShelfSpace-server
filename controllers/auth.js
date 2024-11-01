@@ -1,7 +1,7 @@
 const express = require("express")
 const router = express.Router()
 const bcrypt = require("bcrypt")
-const User = require("../models/user")
+const User = require("../models/User")
 const jwt = require("jsonwebtoken")
 
 const SALT_LENGTH = 12
@@ -15,15 +15,13 @@ router.post("/signup", async (req, res) => {
 				error:
 					"That username is already taken. How about trying a different one?",
 			})
-        }
-        
+		}
 
 		const user = await User.create({
 			username: req.body.username,
 			hashedPassword: bcrypt.hashSync(req.body.password, SALT_LENGTH),
 			ownedReviews: [],
-			lists:[]
-
+			lists: [],
 		})
 		const token = jwt.sign(
 			{ username: user.username, _id: user._id },
