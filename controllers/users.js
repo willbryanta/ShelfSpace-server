@@ -6,10 +6,17 @@ SALT_LENGTH = 12
 
 router.get("/:userId", async (req, res) => {
 	try {
-		const userProfile = await User.findById(req.params.userId)
+		const userProfile = await User.findById(req.params.userId).populate(
+			"ownedReviews"
+		)
 		if (!userProfile) {
 			res.status(404)
 			throw new Ettor("User not found")
+		}
+		if (!userProfile.isOwner(req.body.user)) {
+			return res
+				.status(403)
+				.json({ error: "Oops! It doesn't look like that belongs to you!" })
 		}
 		res.status(200).json(userProfile)
 	} catch (error) {
