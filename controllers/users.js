@@ -46,12 +46,7 @@ router.post("/:userId/lists", async (req, res) => {
 			})
 		}
 
-		const newList = {
-			listName: req.body.listName,
-			items: req.body.items,
-		}
-
-		targetUser.lists.push(newList)
+		targetUser.lists.push(req.body.newList)
 		await targetUser.save()
 
 		return res.status(201).json(targetUser.lists)
