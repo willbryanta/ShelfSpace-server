@@ -40,7 +40,7 @@ router.post("/:userId/lists", async (req, res) => {
 			return res.status(404).json({ error: "user not found!" })
 		}
 
-		if (!isOwner(req.user, targetUser)) {
+		if (!targetUser.isOwner(req.user)) {
 			return res.status(403).json({
 				error: " You don't have permission to create this new list!",
 			})
