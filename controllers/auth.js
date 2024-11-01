@@ -17,16 +17,13 @@ router.post("/signup", async (req, res) => {
 			})
         }
         
-		if (req.body.password !== req.body.confirmPassword) {
-			return res.json({
-				error:
-					"Oops! It looks like your passwords don’t match. Please double-check and try again!",
-			})
-		}
 
 		const user = await User.create({
 			username: req.body.username,
 			hashedPassword: bcrypt.hashSync(req.body.password, SALT_LENGTH),
+			ownedReviews: [],
+			lists:[]
+
 		})
 		const token = jwt.sign(
 			{ username: user.username, _id: user._id },
