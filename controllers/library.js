@@ -19,6 +19,34 @@ router.get("/", (req, res) => {
 	}
 })
 
+router.put("/:itemId", async (req, res) => {
+	try {
+		const item = await LibraryItem.findByIdAndUpdate(
+			req.params.itemId,
+			{
+				name: req.body.name,
+				description: req.body.description,
+				publicationDate: req.body.publicationDate,
+				author: req.body.author,
+			},
+			{ new: true }
+		)
+
+		if (!item) {
+			return res
+				.status(404)
+				.json({ error: "Unfortunately we cannot locate that item" })
+		}
+
+		// Can't chain .populate() on .findByIdAndUpdate(), so can just call .populate() method on instance of item
+		item = await item.populate("ownedReviews").execPopulate()
+
+		res.status(200).json({ item })
+	} catch (error) {
+		res.status(500).json(error.message)
+	}
+})
+
 router.post("/", authenticateUser, async (req, res) => {
 	try {
 		const createdLibraryItem = await LibraryItem.create({
