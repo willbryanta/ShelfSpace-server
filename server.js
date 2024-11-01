@@ -14,6 +14,7 @@ app.listen(process.env.PORT) // get PORT from .env
 app.use(express.json())
 app.use("/auth", authRouter)
 app.use("/users", usersRouter)
+app.use("")
 
 //----------------------- Routing
 app.get("/", (req, res) => {
