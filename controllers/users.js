@@ -11,7 +11,7 @@ router.get("/:userId", async (req, res) => {
 		)
 		if (!userProfile) {
 			res.status(404)
-			throw new Ettor("User not found")
+			throw new Error("User not found")
 		}
 		if (!userProfile.isOwner(req.body.user)) {
 			return res
