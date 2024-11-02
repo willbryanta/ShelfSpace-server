@@ -9,14 +9,12 @@ const SALT_LENGTH = 12
 router.post('/signup', async (req, res) => {
 	try {
 		const userInDatabase = await User.findOne({username: req.body.username})
-
 		if (userInDatabase) {
 			return res.json({
 				error:
 					'That username is already taken. How about trying a different one?',
 			})
 		}
-
 		const user = await User.create({
 			username: req.body.username,
 			hashedPassword: bcrypt.hashSync(req.body.password, SALT_LENGTH),
@@ -36,7 +34,6 @@ router.post('/signup', async (req, res) => {
 router.post('/signin', async (req, res) => {
 	try {
 		const user = await User.findOne({username: req.body.username})
-
 		if (user && bcrypt.compareSync(req.body.password, user.hashedPassword)) {
 			const token = jwt.sign(
 				{username: user.username, _id: user._id},
