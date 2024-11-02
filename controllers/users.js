@@ -32,34 +32,6 @@ router.get('/:userId', async (req, res) => {
 	}
 })
 
-router.get('/:userId/lists/:listId', async (req, res) => {
-	try {
-		const targetUser = await User.findById(req.params.userId)
-
-		if (!targetUser) {
-			return res.status(404).json({error: 'user not found!'})
-		}
-
-		if (!targetUser.isOwner(req.user)) {
-			return res.status(403).json({
-				error: "Oops! It doesn't look like that belongs to you!",
-			})
-		}
-		const targetList = targetUser.lists.find(
-			(list) => list._id.toString() === req.params.listId
-		)
-
-		if (!targetList) {
-			return res.status(404).json({error: 'List not found!'})
-		}
-
-		// Return the target list
-		return res.status(200).json(targetList)
-	} catch (error) {
-		return res.status(500).json(error)
-	}
-})
-
 router.put('/:userId', async (req, res) => {
 	try {
 		const targetUser = await User.findById(req.params.userId)
@@ -92,25 +64,45 @@ router.put('/:userId', async (req, res) => {
 router.post('/:userId/lists', async (req, res) => {
 	try {
 		const targetUser = await User.findById(req.params.userId)
-
 		if (!targetUser) {
 			return res.status(404).json({error: 'user not found!'})
 		}
-
 		if (!targetUser.isOwner(req.user)) {
 			return res.status(403).json({
 				error: " You don't have permission to create this new list!",
 			})
 		}
-
 		targetUser.lists.push(req.body.newList)
 		await targetUser.save()
-
 		return res.status(201).json(targetUser.lists)
 	} catch (error) {
 		return res
 			.status(500)
 			.json({error: ' The server fell down, try again later!'})
+	}
+})
+
+router.get('/:userId/lists/:listId', async (req, res) => {
+	try {
+		const targetUser = await User.findById(req.params.userId)
+		if (!targetUser) {
+			return res.status(404).json({error: 'user not found!'})
+		}
+		if (!targetUser.isOwner(req.user)) {
+			return res.status(403).json({
+				error: "Oops! It doesn't look like that belongs to you!",
+			})
+		}
+		const targetList = targetUser.lists.find(
+			(list) => list._id.toString() === req.params.listId
+		)
+		if (!targetList) {
+			return res.status(404).json({error: 'List not found!'})
+		}
+		// Return the target list
+		return res.status(200).json(targetList)
+	} catch (error) {
+		return res.status(500).json(error)
 	}
 })
 
