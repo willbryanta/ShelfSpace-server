@@ -12,8 +12,11 @@ const express = require("express")
 const app = express()
 const authRouter = require("./controllers/auth")
 const usersRouter = require("./controllers/users")
-const libraryItemsRouter = require("./controllers/libraryItems")
+const libraryItemsRouter = require("./controllers/library")
 const reviewRouter = require("./controllers/reviews")
+
+
+
 
 //----------------------- Server Config
 app.listen(process.env.PORT) // get PORT from .env
