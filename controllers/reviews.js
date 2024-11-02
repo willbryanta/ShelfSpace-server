@@ -6,7 +6,7 @@ const router = express.Router()
 
 router.put("/:reviewId", authenticateUser, async (req, res) => {
 	try {
-		const review = await Review.findByIdAndUpdate(
+		const updatedReview = await Review.findByIdAndUpdate(
 			req.params.reviewId,
 			{
 				title: req.body.title,
@@ -16,13 +16,13 @@ router.put("/:reviewId", authenticateUser, async (req, res) => {
 			{ new: true }
 		)
 
-		if (!review) {
+		if (!updatedReview) {
 			return res
 				.status(404)
 				.json({ error: `Unfortunately we couldn't find that review` })
 		}
 
-		item = await review.populate("author").execPopulate()
+		const item = await updatedReview.populate("author").execPopulate()
 
 		res.status(200).json({ error: item })
 	} catch (error) {
@@ -45,7 +45,11 @@ router.post("/", authenticateUser, async (req, res) => {
 				.json({ error: `Unfortunately we couldn't create that review` })
 		}
 
-		res.status(200).json(createdReview)
+		const createdReviewAuthored = await createdReview
+			.populate("author")
+			.execPopulate()
+
+		res.status(200).json(createdReviewAuthored)
 	} catch (error) {
 		return res.status(500).json(error.message)
 	}
