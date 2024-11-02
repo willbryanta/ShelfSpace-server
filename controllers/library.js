@@ -62,7 +62,7 @@ router.post("/", authenticateUser, async (req, res) => {
 	}
 })
 
-router.get('/:itemId', async (req, res) => {
+router.get('/:itemId', authenticateUser, async (req, res) => {
 	try {
 		const deletedItem = await LibraryItem.findByIdAndDelete(req.params.itemId);
 		if (!deletedItem) {
