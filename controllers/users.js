@@ -93,13 +93,10 @@ router.get('/:userId/lists/:listId', async (req, res) => {
 				error: "Oops! It doesn't look like that belongs to you!",
 			})
 		}
-		const targetList = targetUser.lists.find(
-			(list) => list._id.toString() === req.params.listId
-		)
+		const targetList = targetUser.lists.id(req.params.listId)
 		if (!targetList) {
 			return res.status(404).json({error: 'List not found!'})
 		}
-		// Return the target list
 		return res.status(200).json(targetList)
 	} catch (error) {
 		return res.status(500).json(error)
@@ -114,13 +111,13 @@ router.put('/:userId/lists/:listId', async (req, res) => {
 				error: "Uh-oh! We couldn't find what you're looking for.",
 			})
 		}
-		if (!targetUser.isOwner(req.body.user)) {
+		if (!targetUser.isOwner(req.user)) {
 			return res.status(403).json({
 				error: "Oops! It doesn't look like that belongs to you!",
 			})
 		}
 		targetUser.lists.pull({_id: req.params.listId})
-		targetUser.lists.push(req.params.updatedList)
+		targetUser.lists.push(req.body.updatedList)
 		await targetUser.save()
 		res.status(200).json({targetUser})
 	} catch (error) {
@@ -136,7 +133,7 @@ router.delete('/:userId/lists/:listId', async (req, res) => {
 				error: "Uh-oh! We couldn't find what you're looking for.",
 			})
 		}
-		if (!targetUser.isOwner(req.body.user)) {
+		if (!targetUser.isOwner(req.user)) {
 			return res.status(403).json({
 				error: "Oops! It doesn't look like that belongs to you!",
 			})
