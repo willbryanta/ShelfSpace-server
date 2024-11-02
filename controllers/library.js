@@ -77,6 +77,16 @@ router.get('/:itemId', async (req, res) => {
 			res.status(500).json({ error: error.message });
 		}
 	}
+
 })
+
+router.delete('/:itemId', authenticateUser, async (req, res) => {
+	try {
+		const deletedItem = await LibraryItem.findByIdAndDelete(req.params.itemId);
+		if (!deletedItem) {
+			res.status(404);
+			throw new Error('Library item not found.');
+		}
+		res.status(200).json(deletedItem);
 
 module.exports = router
