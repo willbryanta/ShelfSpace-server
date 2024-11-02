@@ -1,4 +1,4 @@
-const mongoose = require("mongoose")
+const mongoose = require('mongoose')
 
 const listSchema = new mongoose.Schema(
 	{
@@ -9,11 +9,11 @@ const listSchema = new mongoose.Schema(
 		items: [
 			{
 				type: mongoose.Schema.Types.ObjectId,
-				ref: "LibraryItem",
+				ref: 'LibraryItem',
 			},
 		],
 	},
-	{ timestamps: true }
+	{timestamps: true}
 )
 
 const userSchema = new mongoose.Schema(
@@ -30,7 +30,7 @@ const userSchema = new mongoose.Schema(
 		ownedReviews: [
 			{
 				type: mongoose.Schema.Types.ObjectId,
-				ref: "Review",
+				ref: 'Review',
 			},
 		],
 		lists: [listSchema],
@@ -45,10 +45,10 @@ const userSchema = new mongoose.Schema(
 	}
 )
 
-userSchema.set("toJSON", {
+userSchema.set('toJSON', {
 	transform: (document, returnedObject) => {
 		delete returnedObject.hashedPassword
 	},
 })
 
-module.exports = mongoose.model("User", userSchema)
+module.exports = mongoose.model('User', userSchema)
