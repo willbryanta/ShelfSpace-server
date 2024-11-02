@@ -1,10 +1,10 @@
-const express = require("express")
-const authenticateUser = require("../middleware/authenticateUser.js")
-const User = require("../models/User.js")
-const LibraryItem = require("../models/LibraryItem.js")
+const express = require('express')
+const authenticateUser = require('../middleware/authenticateUser.js')
+const User = require('../models/User.js')
+const LibraryItem = require('../models/LibraryItem.js')
 const router = express.Router()
 
-router.get("/", (req, res) => {
+router.get('/', (req, res) => {
 	try {
 		const library = LibraryItem.find()
 
@@ -19,7 +19,7 @@ router.get("/", (req, res) => {
 	}
 })
 
-router.put("/:itemId", async (req, res) => {
+router.put('/:itemId', async (req, res) => {
 	try {
 		const item = await LibraryItem.findByIdAndUpdate(
 			req.params.itemId,
@@ -29,25 +29,25 @@ router.put("/:itemId", async (req, res) => {
 				publicationDate: req.body.publicationDate,
 				author: req.body.author,
 			},
-			{ new: true }
+			{new: true}
 		)
 
 		if (!item) {
 			return res
 				.status(404)
-				.json({ error: "Unfortunately we cannot locate that item" })
+				.json({error: 'Unfortunately we cannot locate that item'})
 		}
 
 		// Can't chain .populate() on .findByIdAndUpdate(), so can just call .populate() method on instance of item
-		item = await item.populate("ownedReviews").execPopulate()
+		item = await item.populate('ownedReviews').execPopulate()
 
-		res.status(200).json({ item })
+		res.status(200).json({item})
 	} catch (error) {
 		res.status(500).json(error.message)
 	}
 })
 
-router.post("/", authenticateUser, async (req, res) => {
+router.post('/', authenticateUser, async (req, res) => {
 	try {
 		const createdLibraryItem = await LibraryItem.create({
 			name: req.body.name,
@@ -58,13 +58,13 @@ router.post("/", authenticateUser, async (req, res) => {
 		})
 		res.status(201).json(createdLibraryItem)
 	} catch (error) {
-		res.status(500).json({ error: error.message })
+		res.status(500).json({error: error.message})
 	}
 })
 
 router.get('/:itemId', async (req, res) => {
 	try {
-		const foundItem = await LibraryItem.findById(req.params.itemId);
+		const foundItem = await LibraryItem.findById(req.params.itemId)
 		if (!foundItem) {
 			res.status(404)
 			throw new Error('Library item not found.')
@@ -72,9 +72,9 @@ router.get('/:itemId', async (req, res) => {
 		res.status(200).json(foundItem)
 	} catch (error) {
 		if (res.statusCode === 404) {
-			res.json({ error: error.message });
+			res.json({error: error.message})
 		} else {
-			res.status(500).json({ error: error.message });
+			res.status(500).json({error: error.message})
 		}
 	}
 })
