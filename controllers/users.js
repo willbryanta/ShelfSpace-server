@@ -53,7 +53,12 @@ router.put('/:userId', async (req, res) => {
 			})
 		}
 		targetUser.username = req.body.username
-		targetUser.hashedPassword = bcrypt.hashSync(req.body.password, SALT_LENGTH)
+		if (req.body.password) {
+			targetUser.hashedPassword = bcrypt.hashSync(
+				req.body.password,
+				SALT_LENGTH
+			)
+		}
 		await targetUser.save()
 		return res.status(200).json({targetUser})
 	} catch (error) {
