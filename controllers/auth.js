@@ -48,4 +48,9 @@ router.post('/signin', async (req, res) => {
 	}
 })
 
+router.post(`/password/:userId`, async (req, res) => {
+	const targetUser = await User.findById(req.params.userId)
+	return res.status(200).json(bcrypt.compareSync(req.body.password, targetUser.hashedPassword))
+})
+
 module.exports = router
