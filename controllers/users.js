@@ -151,4 +151,32 @@ router.delete('/:userId/lists/:listId', async (req, res) => {
 	}
 })
 
+router.delete('/:userId/lists/:listId/items/:itemId', async (req, res) => {
+	try {
+		const targetUser = await User.findById(req.params.usedId)
+		if (!targetUser) {
+			return res
+				.status(404)
+				.json({error: "Uh-oh! We couldn't find what you're looking for."})
+
+		}
+
+		if (!targetUser.isOwner(req.user)) {
+			return res.status(403).json({
+				error: "Oops! It doesn't look like that belongs to you!",
+			})
+		}
+
+		const targetList = targetUser.lists.id(req.params.listId)
+		if (!targetList) {
+			return res.status(404).json({error: 'List not found!'})
+		}
+		targetList.items.pull({ _id: req.params.itemId })
+		await targetUser.save()
+		res.status(200).json({message: 'Item deleted successfully', targetList})
+	} catch (error) {
+		res.status(500).json({error: error.message})
+	}
+})
+
 module.exports = router
