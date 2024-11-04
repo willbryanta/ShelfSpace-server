@@ -12,17 +12,14 @@ router.post('/', authenticateUser, async (req, res) => {
 			rating: req.body.rating,
 			author: req.body.author,
 		})
-
 		if (!createdReview) {
 			res
 				.status(500)
 				.json({error: `Unfortunately we couldn't create that review`})
 		}
-
 		const createdReviewAuthored = await createdReview
 			.populate('author')
 			.execPopulate()
-
 		res.status(200).json(createdReviewAuthored)
 	} catch (error) {
 		return res.status(500).json(error.message)
@@ -40,15 +37,12 @@ router.put('/:reviewId', authenticateUser, async (req, res) => {
 			},
 			{new: true}
 		)
-
 		if (!updatedReview) {
 			return res
 				.status(404)
 				.json({error: `Unfortunately we couldn't find that review`})
 		}
-
 		const item = await updatedReview.populate('author').execPopulate()
-
 		res.status(200).json({error: item})
 	} catch (error) {
 		res.status(500).json(error.message)
@@ -62,12 +56,10 @@ router.delete('/:reviewId', authenticateUser, async (req, res) => {
 			res.status(404)
 			throw new Error('Review not found.')
 		}
-
 		if (!deletedReview.isOwner(req.body.user)) {
 			res.status(403)
 			throw new Error('This review does not belong to you.')
 		}
-
 		res.status(200).json(deletedReview)
 	} catch (error) {
 		if (res.statusCode === 404) {

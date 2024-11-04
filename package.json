@@ -4,7 +4,8 @@
 	"description": "## Description",
 	"main": "server.js",
 	"scripts": {
-		"dev": "nodemon server.js"
+		"dev": "nodemon server.js",
+		"seed": "node models/seeds.js"
 	},
 	"author": "",
 	"license": "ISC",
