@@ -11,12 +11,16 @@ router.post('/', authenticateUser, async (req, res) => {
 			description: req.body.description,
 			rating: req.body.rating,
 			author: req.body.author,
+			libraryItem: req.body.libraryItemId,
 		})
 		if (!createdReview) {
 			res
 				.status(500)
 				.json({error: `Unfortunately we couldn't create that review`})
 		}
+		const parentItem = await LibraryItem.findById(req.body.libraryItemId)
+		parentItem.reviews.push(createdReview)
+		await parentItem.save()
 		const createdReviewAuthored = await createdReview
 			.populate('author')
 			.execPopulate()

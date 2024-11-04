@@ -17,8 +17,8 @@ const reviewSchema = new mongoose.Schema(
 		},
 		libraryItem: {
 			type: mongoose.Types.ObjectId,
-			ref:"LibraryItem"
-		}
+			ref: 'LibraryItem',
+		},
 	},
 	{
 		timestamps: true,
