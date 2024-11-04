@@ -10,25 +10,20 @@ router.use(authenticateUser)
 
 router.get('/:userId', async (req, res) => {
 	try {
-		const userProfile = await User.findById(req.params.userId)
-			.populate({
-				path: `ownedReviews`,
-				populate: {path: `review`},
-			})
-			.populate({
-				path: 'ownedReviews',
-				populate: {path: 'review', populate: {path: 'author'}},
-			})
-		if (!userProfile) {
+		const user = await User.findById(req.params.userId)
+		if (!user) {
 			res.status(404)
 			throw new Error('User not found')
 		}
-		if (!userProfile.isOwner(req.user)) {
+		if (!user.isOwner(req.user)) {
 			return res
 				.status(403)
 				.json({error: "Oops! It doesn't look like that belongs to you!"})
 		}
-		res.status(200).json(userProfile)
+		const reviews = await Review.find({author: user._id})
+			.populate('author')
+			.populate('libraryItem')
+		res.status(200).json({user, reviews})
 	} catch (error) {
 		if (res.statusCode === 404) {
 			res.json({error: error.message})
@@ -164,7 +159,6 @@ router.delete('/:userId/lists/:listId/items/:itemId', async (req, res) => {
 			return res
 				.status(404)
 				.json({error: "Uh-oh! We couldn't find what you're looking for."})
-
 		}
 
 		if (!targetUser.isOwner(req.user)) {
@@ -177,7 +171,7 @@ router.delete('/:userId/lists/:listId/items/:itemId', async (req, res) => {
 		if (!targetList) {
 			return res.status(404).json({error: 'List not found!'})
 		}
-		targetList.items.pull({ _id: req.params.itemId })
+		targetList.items.pull({_id: req.params.itemId})
 		await targetUser.save()
 		res.status(200).json({message: 'Item deleted successfully', targetList})
 	} catch (error) {
