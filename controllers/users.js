@@ -10,10 +10,15 @@ router.use(authenticateUser)
 
 router.get('/:userId', async (req, res) => {
 	try {
-		const userProfile = await User.findById(req.params.userId).populate({
-			path: `ownedReviews`,
-			populate: {path: `review`},
-		})
+		const userProfile = await User.findById(req.params.userId)
+			.populate({
+				path: `ownedReviews`,
+				populate: {path: `review`},
+			})
+			.populate({
+				path: 'ownedReviews',
+				populate: {path: 'review', populate: {path: 'author'}},
+			})
 		if (!userProfile) {
 			res.status(404)
 			throw new Error('User not found')
