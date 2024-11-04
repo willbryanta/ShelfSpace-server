@@ -146,7 +146,7 @@ router.delete('/:userId/lists/:listId', async (req, res) => {
 		}
 		targetUser.lists.pull({_id: req.params.listId})
 		await targetUser.save()
-		res.status(200).json({targetUser})
+		res.status(200).json(targetUser)
 	} catch (error) {
 		res.status(500).json(error.message)
 	}
