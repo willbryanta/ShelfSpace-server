@@ -15,6 +15,10 @@ const reviewSchema = new mongoose.Schema(
 			type: mongoose.Types.ObjectId,
 			ref: 'User',
 		},
+		libraryItem: {
+			type: mongoose.Types.ObjectId,
+			ref:"LibraryItem"
+		}
 	},
 	{
 		timestamps: true,
