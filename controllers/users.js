@@ -10,14 +10,20 @@ router.use(authenticateUser)
 
 router.get('/:userId', async (req, res) => {
 	try {
-		const userProfile = await User.findById(req.params.userId).populate(
-			'ownedReviews'
-		)
+		const userProfile = await User.findById(req.params.userId)
+			.populate({
+				path: `ownedReviews`,
+				populate: {path: `review`},
+			})
+			.populate({
+				path: 'ownedReviews',
+				populate: {path: 'review', populate: {path: 'author'}},
+			})
 		if (!userProfile) {
 			res.status(404)
 			throw new Error('User not found')
 		}
-		if (!userProfile.isOwner(req.body.user)) {
+		if (!userProfile.isOwner(req.user)) {
 			return res
 				.status(403)
 				.json({error: "Oops! It doesn't look like that belongs to you!"})
@@ -41,13 +47,13 @@ router.put('/:userId', async (req, res) => {
 			})
 		}
 		const nameInDatabase = await User.findOne({username: req.body.username})
-		if (!targetUser.isOwner(req.body.user)) {
+		if (!targetUser.isOwner(req.user)) {
 			return res.status(403).json({
 				error: "Oops! It doesn't look like that belongs to you!",
 			})
 		}
 		if (nameInDatabase && !nameInDatabase._id.equals(targetUser._id)) {
-			return res.status(403).json({
+			return res.status(422).json({
 				error:
 					'That username is already taken. How about trying a different one?',
 			})

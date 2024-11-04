@@ -29,8 +29,8 @@ const userSchema = new mongoose.Schema(
 		},
 		ownedReviews: [
 			{
-				type: mongoose.Schema.Types.ObjectId,
-				ref: 'Review',
+				review: {type: mongoose.Schema.Types.ObjectId, ref: 'Review'},
+				filmTitle: {type: String, required: true},
 			},
 		],
 		lists: [listSchema],
