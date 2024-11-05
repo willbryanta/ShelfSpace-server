@@ -158,7 +158,7 @@ router.delete('/:userId/lists/:listId', async (req, res) => {
 
 router.delete('/:userId/lists/:listId/items/:itemId', async (req, res) => {
 	try {
-		const targetUser = await User.findById(req.params.usedId)
+		const targetUser = await User.findById(req.params.userId)
 		if (!targetUser) {
 			return res
 				.status(404)
@@ -177,7 +177,8 @@ router.delete('/:userId/lists/:listId/items/:itemId', async (req, res) => {
 		}
 		targetList.items.pull({_id: req.params.itemId})
 		await targetUser.save()
-		res.status(200).json({message: 'Item deleted successfully', targetList})
+		await targetUser.populate('lists.items')
+		res.status(200).json(targetList)
 	} catch (error) {
 		res.status(500).json({error: error.message})
 	}
