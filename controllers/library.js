@@ -62,21 +62,42 @@ router.post("/", authenticateUser, async (req, res) => {
 	}
 })
 
-router.get('/:itemId', authenticateUser, async (req, res) => {
+router.get("/:itemId", authenticateUser, async (req, res) => {
 	try {
-		const deletedItem = await LibraryItem.findByIdAndDelete(req.params.itemId);
+		const deletedItem = await LibraryItem.findByIdAndDelete(req.params.itemId)
 		if (!deletedItem) {
-			res.status(404);
-			throw new Error('Library item not found.');
+			res.status(404)
+			throw new Error("Library item not found.")
 		}
-		res.status(200).json(deletedItem);
+		res.status(200).json(deletedItem)
 	} catch (error) {
 		if (res.statusCode === 404) {
-			res.json({ error: error.message });
+			res.json({ error: error.message })
 		} else {
-			res.status(500).json({ error: error.message });
+			res.status(500).json({ error: error.message })
 		}
 	}
-});
+})
+
+router.delete("/:itemId", authenticateUser, async (req, res) => {
+	try {
+		const deletedLibraryItem = await LibraryItem.findById(req.params.itemId)
+		if (!deletedLibraryItem) {
+			res.status(404)
+			throw new Error("Review not found.")
+		}
+		if (!deletedLibraryItem.isOwner(req.body.user)) {
+			res.status(403)
+			throw new Error("This library item does not belong to you.")
+		}
+		res.status(200).json(deletedLibraryItem)
+	} catch (error) {
+		if (res.statusCode === 404) {
+			res.json({ error: error.message })
+		} else {
+			res.status(500).json({ error: error.message })
+		}
+	}
+})
 
 module.exports = router
