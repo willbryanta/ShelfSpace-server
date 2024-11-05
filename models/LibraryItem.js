@@ -1,4 +1,4 @@
-const mongoose = require("mongoose")
+const mongoose = require('mongoose')
 
 const libraryItemSchema = new mongoose.Schema(
 	{
@@ -15,16 +15,16 @@ const libraryItemSchema = new mongoose.Schema(
 		},
 		author: {
 			type: mongoose.Schema.Types.ObjectId,
-			ref: "User",
+			ref: 'User',
 		},
 		reviews: [
 			{
 				type: mongoose.Schema.Types.ObjectId,
-				ref: "Review",
+				ref: 'Review',
 			},
 		],
 	},
-	{ timestamps: true }
+	{timestamps: true}
 )
 
-module.exports = mongoose.model("LibraryItem", libraryItemSchema)
+module.exports = mongoose.model('LibraryItem', libraryItemSchema)
