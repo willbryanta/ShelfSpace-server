@@ -90,7 +90,10 @@ router.post('/:userId/lists', async (req, res) => {
 
 router.get('/:userId/lists/:listId', async (req, res) => {
 	try {
-		const targetUser = await User.findById(req.params.userId)
+		const targetUser = await User.findById(req.params.userId).populate({
+			path: 'list',
+			populate: {path: 'items'},
+		})
 		if (!targetUser) {
 			return res.status(404).json({error: 'user not found!'})
 		}
@@ -111,7 +114,10 @@ router.get('/:userId/lists/:listId', async (req, res) => {
 
 router.put('/:userId/lists/:listId', async (req, res) => {
 	try {
-		const targetUser = await User.findById(req.params.userId)
+		const targetUser = await User.findById(req.params.userId).populate({
+			path: 'list',
+			populate: {path: 'items'},
+		})
 		if (!targetUser) {
 			return res.status(404).json({
 				error: "Uh-oh! We couldn't find what you're looking for.",
@@ -122,10 +128,11 @@ router.put('/:userId/lists/:listId', async (req, res) => {
 				error: "Oops! It doesn't look like that belongs to you!",
 			})
 		}
-		targetUser.lists.pull({_id: req.params.listId})
-		targetUser.lists.push(req.body.updatedList)
+		const updatedList = targetUser.lists.id(req.params.listId)
+		updatedList.listName = req.body.updatedList.listName
+		updatedList.items = req.body.updatedList.items
 		await targetUser.save()
-		res.status(200).json({targetUser})
+		res.status(200).json(updatedList)
 	} catch (error) {
 		res.status(500).json(error.message)
 	}
