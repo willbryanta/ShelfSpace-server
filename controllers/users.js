@@ -33,40 +33,6 @@ router.get('/:userId', async (req, res) => {
 	}
 })
 
-router.put('/:userId', async (req, res) => {
-	try {
-		const targetUser = await User.findById(req.params.userId)
-		if (!targetUser) {
-			return res.status(404).json({
-				error: "Uh-oh! We couldn't find what you're looking for.",
-			})
-		}
-		const nameInDatabase = await User.findOne({username: req.body.username})
-		if (!targetUser.isOwner(req.user)) {
-			return res.status(403).json({
-				error: "Oops! It doesn't look like that belongs to you!",
-			})
-		}
-		if (nameInDatabase && !nameInDatabase._id.equals(targetUser._id)) {
-			return res.status(422).json({
-				error:
-					'That username is already taken. How about trying a different one?',
-			})
-		}
-		targetUser.username = req.body.username
-		if (req.body.password) {
-			targetUser.hashedPassword = bcrypt.hashSync(
-				req.body.password,
-				SALT_LENGTH
-			)
-		}
-		await targetUser.save()
-		return res.status(200).json({targetUser})
-	} catch (error) {
-		res.status(500).json(error.message)
-	}
-})
-
 router.post('/:userId/lists', async (req, res) => {
 	try {
 		const targetUser = await User.findById(req.params.userId)
