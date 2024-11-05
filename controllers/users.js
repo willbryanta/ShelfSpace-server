@@ -90,7 +90,9 @@ router.post('/:userId/lists', async (req, res) => {
 
 router.get('/:userId/lists/:listId', async (req, res) => {
 	try {
-		const targetUser = await User.findById(req.params.userId)
+		const targetUser = await User.findById(req.params.userId).populate(
+			'lists.items'
+		)
 		if (!targetUser) {
 			return res.status(404).json({error: 'user not found!'})
 		}
@@ -122,10 +124,12 @@ router.put('/:userId/lists/:listId', async (req, res) => {
 				error: "Oops! It doesn't look like that belongs to you!",
 			})
 		}
-		targetUser.lists.pull({_id: req.params.listId})
-		targetUser.lists.push(req.body.updatedList)
+		const updatedList = targetUser.lists.id(req.params.listId)
+		updatedList.listName = req.body.updatedList.listName
+		updatedList.items = req.body.updatedList.items
 		await targetUser.save()
-		res.status(200).json({targetUser})
+		await targetUser.populate('lists.items')
+		res.status(200).json(updatedList)
 	} catch (error) {
 		res.status(500).json(error.message)
 	}
@@ -154,7 +158,7 @@ router.delete('/:userId/lists/:listId', async (req, res) => {
 
 router.delete('/:userId/lists/:listId/items/:itemId', async (req, res) => {
 	try {
-		const targetUser = await User.findById(req.params.usedId)
+		const targetUser = await User.findById(req.params.userId)
 		if (!targetUser) {
 			return res
 				.status(404)
@@ -173,7 +177,8 @@ router.delete('/:userId/lists/:listId/items/:itemId', async (req, res) => {
 		}
 		targetList.items.pull({_id: req.params.itemId})
 		await targetUser.save()
-		res.status(200).json({message: 'Item deleted successfully', targetList})
+		await targetUser.populate('lists.items')
+		res.status(200).json(targetList)
 	} catch (error) {
 		res.status(500).json({error: error.message})
 	}
