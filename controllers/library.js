@@ -21,7 +21,7 @@ router.post('/', authenticateUser, async (req, res) => {
 
 router.get('/', async (req, res) => {
 	try {
-		const library = await LibraryItem.find()
+		const library = await LibraryItem.find().populate('reviews')
 		if (!library) {
 			return res.status(404).json({
 				error: `Unfortunately we can't find the items you're looking for`,
