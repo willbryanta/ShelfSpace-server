@@ -86,7 +86,7 @@ router.delete("/:itemId", authenticateUser, async (req, res) => {
 			res.status(404)
 			throw new Error("Review not found.")
 		}
-		if (!deletedLibraryItem.isOwner(req.body.user)) {
+		if (!deletedLibraryItem.isOwner(req.user)) {
 			res.status(403)
 			throw new Error("This library item does not belong to you.")
 		}
