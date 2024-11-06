@@ -27,7 +27,7 @@ router.post('/signup', async (req, res) => {
 		)
 		res.status(201).json({user, token})
 	} catch (error) {
-		res.status(500).json({error: error.message})
+		res.status(500).json({error})
 	}
 })
 
@@ -44,7 +44,7 @@ router.post('/signin', async (req, res) => {
 			res.status(401).json({error: 'Invalid username or password.'})
 		}
 	} catch (error) {
-		res.status(500).json({error: error.message})
+		res.status(500).json({error})
 	}
 })
 
@@ -56,9 +56,9 @@ router.put(`/:userId`, authenticateUser, async (req, res) => {
 			return res.status(404).json({error: 'User not found.'})
 		}
 		if (!user.isOwner(req.user)) {
-			return res
-				.status(403)
-				.json({error: "Oops! It doesn't look like that belongs to you!"})
+			return res.status(403).json({
+				error: "Oops! It doesn't look like that belongs to you!",
+			})
 		}
 		if (!bcrypt.compareSync(req.body.currentPassword, user.hashedPassword)) {
 			return res
@@ -82,7 +82,7 @@ router.put(`/:userId`, authenticateUser, async (req, res) => {
 		)
 		return res.status(200).json({user, token})
 	} catch (error) {
-		res.status(500).json({error: error.message})
+		res.status(500).json({error})
 	}
 })
 
