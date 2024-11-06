@@ -2,6 +2,7 @@ const express = require('express')
 const authenticateUser = require('../middleware/authenticateUser.js')
 const User = require('../models/User.js')
 const LibraryItem = require('../models/LibraryItem.js')
+const Review = require('../models/Review.js')
 const router = express.Router()
 
 router.post('/', authenticateUser, async (req, res) => {
@@ -35,7 +36,7 @@ router.get('/', async (req, res) => {
 
 router.get('/:itemId', async (req, res) => {
 	try {
-		const foundItem = await LibraryItem.findById(req.params.itemId)
+		const foundItem = await LibraryItem.findById(req.params.itemId).populate('author')
 		if (!foundItem) {
 			res.status(404)
 			throw new Error('Library item not found.')
@@ -73,23 +74,36 @@ router.put('/:itemId', async (req, res) => {
 	}
 })
 
-router.delete("/:itemId", authenticateUser, async (req, res) => {
+router.delete('/:itemId', authenticateUser, async (req, res) => {
 	try {
-		const deletedLibraryItem = await LibraryItem.findById(req.params.itemId)
-		if (!deletedLibraryItem) {
+		const targetLibraryItem = await LibraryItem.findById(req.params.itemId)
+		if (!targetLibraryItem) {
 			res.status(404)
-			throw new Error("Review not found.")
+			throw new Error('Library item not found.')
 		}
-		if (!deletedLibraryItem.isOwner(req.user)) {
+		if (!targetLibraryItem.isOwner(req.body.user)) {
 			res.status(403)
-			throw new Error("This library item does not belong to you.")
+			throw new Error('This library item does not belong to you.')
 		}
+		//prettier-ignore
+		const deletedReviews = await Review.deleteMany({
+			_id: {"$in": targetLibraryItem.reviews},
+		})
+		//prettier-ignore
+		const deletedListItems = await User.updateMany(
+			{'lists.items': targetLibraryItem._id},
+			{ "$pull": { 'lists.$[].items': targetLibraryItem._id } }
+			//The magic rune $[] instructs the query to pull from all arrays that match the query
+		)
+		const deletedLibraryItem = await LibraryItem.findByIdAndDelete(
+			targetLibraryItem._id
+		)
 		res.status(200).json(deletedLibraryItem)
 	} catch (error) {
 		if (res.statusCode === 404) {
-			res.json({ error: error.message })
+			res.json({error: error.message})
 		} else {
-			res.status(500).json({ error: error.message })
+			res.status(500).json({error: error.message})
 		}
 	}
 })

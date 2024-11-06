@@ -1,4 +1,6 @@
 const mongoose = require('mongoose')
+const User = require('./User')
+const Review = require('./Review')
 
 const libraryItemSchema = new mongoose.Schema(
 	{
@@ -24,7 +26,14 @@ const libraryItemSchema = new mongoose.Schema(
 			},
 		],
 	},
-	{timestamps: true}
+	{
+		timestamps: true,
+		methods: {
+			isOwner: function (User) {
+				return this.author.equals(User._id)
+			},
+		},
+	}
 )
 
 module.exports = mongoose.model('LibraryItem', libraryItemSchema)

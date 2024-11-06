@@ -22,7 +22,7 @@ const reviewSchema = new mongoose.Schema(
 	},
 	{
 		timestamps: true,
-		method: {
+		methods: {
 			isOwner: function (User) {
 				return this.author.equals(User._id)
 			},
