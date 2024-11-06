@@ -36,19 +36,4 @@ const libraryItemSchema = new mongoose.Schema(
 	}
 )
 
-// libraryItemSchema.pre('remove', async function (next) {
-// 	try {
-// // Remove the movie from all users' lists
-// 		await User.updateMany(
-// 			{ "lists.items": this._id },
-// 			{ $pull: { "lists.$.items": this._id } }
-// 		)
-
-// 		await Review.deleteMany({ libraryItem: this._id })
-// 		next()
-// 	} catch (error) {
-// 		next(error)
-// 	}
-// })
-
 module.exports = mongoose.model('LibraryItem', libraryItemSchema)
