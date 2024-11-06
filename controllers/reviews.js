@@ -2,6 +2,7 @@ const express = require('express')
 const authenticateUser = require('../middleware/authenticateUser.js')
 const User = require('../models/User.js')
 const Review = require('../models/Review.js')
+const LibraryItem = require('../models/LibraryItem.js')
 const router = express.Router()
 
 router.post('/', authenticateUser, async (req, res) => {
@@ -55,16 +56,20 @@ router.put('/:reviewId', authenticateUser, async (req, res) => {
 
 router.delete('/:reviewId', authenticateUser, async (req, res) => {
 	try {
-		const deletedReview = await Review.findById(req.params.reviewId)
-		if (!deletedReview) {
+		const targetReview = await Review.findById(req.params.reviewId)
+		if (!targetReview) {
 			res.status(404)
 			throw new Error('Review not found.')
 		}
-		if (!deletedReview.isOwner(req.body.user)) {
+		if (!targetReview.isOwner(req.body.user)) {
 			res.status(403)
 			throw new Error('This review does not belong to you.')
 		}
-		res.status(200).json(deletedReview)
+		const deletedReview = await Review.findByIdAndDelete(targetReview._id)
+		const updatedLibraryItem = await LibraryItem.findById(deletedReview.LibraryItem)
+		updatedLibraryItem.reviews.pull({ _id: deletedReview._id })
+		await updatedLibraryItem.save()
+		res.status(200).json(targetReview)
 	} catch (error) {
 		if (res.statusCode === 404) {
 			res.json({error: error.message})
