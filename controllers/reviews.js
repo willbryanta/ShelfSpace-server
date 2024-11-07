@@ -33,6 +33,18 @@ router.post('/', authenticateUser, async (req, res) => {
 
 router.put('/:reviewId', authenticateUser, async (req, res) => {
 	try {
+		const targetReview = await Review.findById(req.params.reviewId)
+		if (!targetReview) {
+			return res.status(404).json({
+				error: "Uh-oh! We couldn't find that review.",
+			})
+		}
+		if (!targetReview.isOwner(req.user)) {
+			return res.status(403).json({
+				error: "Oops! It doesn't look like that belongs to you!",
+			})
+		}
+
 		const updatedReview = await Review.findByIdAndUpdate(
 			req.params.reviewId,
 			{
@@ -41,14 +53,15 @@ router.put('/:reviewId', authenticateUser, async (req, res) => {
 				rating: req.body.rating,
 			},
 			{new: true}
-		)
+		).populate('author')
+
 		if (!updatedReview) {
 			return res
 				.status(404)
-				.json({error: `Unfortunately we couldn't find that review`})
+				.json({error: `Unfortunately we couldn't update that review`})
 		}
-		const item = await updatedReview.populate('author').execPopulate()
-		res.status(200).json({error: item})
+
+		res.status(200).json(updatedReview)
 	} catch (error) {
 		res.status(500).json({error})
 	}
