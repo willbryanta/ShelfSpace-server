@@ -7,19 +7,20 @@ const libraryItemSchema = new mongoose.Schema(
 		posterPath: {
 			type: String,
 		},
-		title: {
+		name: {
 			type: String,
 			required: true,
 		},
-		overview: {
+		description: {
 			type: String,
 		},
-		releaseDate: {
+		publicationDate: {
 			type: Date,
 			required: true,
 		},
-		popularity: {
-			type: Number
+		author: {
+			type: mongoose.Schema.Types.ObjectId,
+			ref: 'User',
 		},
 		reviews: [
 			{
