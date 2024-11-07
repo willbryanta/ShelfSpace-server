@@ -33,9 +33,7 @@ router.post('/', authenticateUser, async (req, res) => {
 
 router.put('/:reviewId', authenticateUser, async (req, res) => {
 	try {
-		const targetReview = await Review.findById(req.params.reviewId).populate(
-			'author'
-		)
+		const targetReview = await Review.findById(req.params.reviewId)
 		if (!targetReview) {
 			return res.status(404).json({
 				error: "Uh-oh! We couldn't find that review.",
