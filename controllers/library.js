@@ -16,7 +16,7 @@ router.post('/', authenticateUser, async (req, res) => {
 		})
 		res.status(201).json(createdLibraryItem)
 	} catch (error) {
-		res.status(500).json({error: error.message})
+		res.status(500).json({error})
 	}
 })
 
@@ -30,13 +30,15 @@ router.get('/', async (req, res) => {
 		}
 		return res.status(200).json(library)
 	} catch (error) {
-		return res.status(500).json(error.message)
+		return res.status(500).json({error})
 	}
 })
 
 router.get('/:itemId', async (req, res) => {
 	try {
-		const foundItem = await LibraryItem.findById(req.params.itemId).populate('author')
+		const foundItem = await LibraryItem.findById(req.params.itemId).populate(
+			'author'
+		)
 		if (!foundItem) {
 			res.status(404)
 			throw new Error('Library item not found.')
@@ -44,9 +46,9 @@ router.get('/:itemId', async (req, res) => {
 		res.status(200).json(foundItem)
 	} catch (error) {
 		if (res.statusCode === 404) {
-			res.json({error: error.message})
+			res.json({error})
 		} else {
-			res.status(500).json({error: error.message})
+			res.status(500).json({error})
 		}
 	}
 })
@@ -70,7 +72,7 @@ router.put('/:itemId', async (req, res) => {
 		}
 		res.status(200).json({item})
 	} catch (error) {
-		res.status(500).json(error.message)
+		res.status(500).json({error})
 	}
 })
 
@@ -101,9 +103,9 @@ router.delete('/:itemId', authenticateUser, async (req, res) => {
 		res.status(200).json(deletedLibraryItem)
 	} catch (error) {
 		if (res.statusCode === 404) {
-			res.json({error: error.message})
+			res.json({error})
 		} else {
-			res.status(500).json({error: error.message})
+			res.status(500).json({error})
 		}
 	}
 })

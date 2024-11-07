@@ -16,9 +16,9 @@ router.get('/:userId', async (req, res) => {
 			throw new Error('User not found')
 		}
 		if (!user.isOwner(req.user)) {
-			return res
-				.status(403)
-				.json({error: "Oops! It doesn't look like that belongs to you!"})
+			return res.status(403).json({
+				error: "Oops! It doesn't look like that belongs to you!",
+			})
 		}
 		const reviews = await Review.find({author: user._id})
 			.populate('author')
@@ -26,9 +26,9 @@ router.get('/:userId', async (req, res) => {
 		res.status(200).json({user, reviews})
 	} catch (error) {
 		if (res.statusCode === 404) {
-			res.json({error: error.message})
+			res.json({error})
 		} else {
-			res.status(500).json({error: error.message})
+			res.status(500).json({error})
 		}
 	}
 })
@@ -73,7 +73,7 @@ router.get('/:userId/lists/:listId', async (req, res) => {
 		}
 		return res.status(200).json(targetList)
 	} catch (error) {
-		return res.status(500).json(error)
+		return res.status(500).json({error})
 	}
 })
 
@@ -97,7 +97,7 @@ router.put('/:userId/lists/:listId', async (req, res) => {
 		await targetUser.populate('lists.items')
 		res.status(200).json(updatedList)
 	} catch (error) {
-		res.status(500).json(error.message)
+		res.status(500).json({error})
 	}
 })
 
@@ -118,7 +118,7 @@ router.delete('/:userId/lists/:listId', async (req, res) => {
 		await targetUser.save()
 		res.status(200).json(targetUser)
 	} catch (error) {
-		res.status(500).json(error.message)
+		res.status(500).json({error})
 	}
 })
 
