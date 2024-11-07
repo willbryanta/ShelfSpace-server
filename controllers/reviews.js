@@ -7,24 +7,23 @@ const router = express.Router()
 
 router.post('/', authenticateUser, async (req, res) => {
 	try {
-		const createdReview = Review.create({
+		const createdReview = await Review.create({
 			title: req.body.title,
 			description: req.body.description,
 			rating: req.body.rating,
-			author: req.body.author,
-			libraryItem: req.body.libraryItemId,
+			author: req.user,
+			libraryItem: req.body.libraryItem,
 		})
 		if (!createdReview) {
 			res.status(500).json({
 				error: `Unfortunately we couldn't create that review`,
 			})
 		}
-		const parentItem = await LibraryItem.findById(req.body.libraryItemId)
+		const parentItem = await LibraryItem.findById(createdReview.libraryItem)
 		parentItem.reviews.push(createdReview)
 		await parentItem.save()
 		const createdReviewAuthored = await createdReview
 			.populate('author')
-			.execPopulate()
 		res.status(200).json(createdReviewAuthored)
 	} catch (error) {
 		return res.status(500).json({error})
