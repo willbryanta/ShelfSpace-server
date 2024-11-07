@@ -84,7 +84,7 @@ router.delete('/:itemId', authenticateUser, async (req, res) => {
 			res.status(404)
 			throw new Error('Library item not found.')
 		}
-		if (!targetLibraryItem.isOwner(req.body.user)) {
+		if (!targetLibraryItem.isOwner(req.user)) {
 			res.status(403)
 			throw new Error('This library item does not belong to you.')
 		}
