@@ -80,11 +80,12 @@ router.delete('/:reviewId', authenticateUser, async (req, res) => {
 		}
 		const deletedReview = await Review.findByIdAndDelete(targetReview._id)
 		const updatedLibraryItem = await LibraryItem.findById(
-			deletedReview.LibraryItem
+			deletedReview.libraryItem
 		)
 		updatedLibraryItem.reviews.pull({_id: deletedReview._id})
 		await updatedLibraryItem.save()
-		res.status(200).json(targetReview)
+		
+		res.status(200).json(deletedReview)
 	} catch (error) {
 		if (res.statusCode === 404) {
 			res.json({error})

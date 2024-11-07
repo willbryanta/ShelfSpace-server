@@ -11,9 +11,10 @@ router.post('/', authenticateUser, async (req, res) => {
 			name: req.body.name,
 			description: req.body.description,
 			publicationDate: req.body.publicationDate,
-			author: req.body.author,
+			author: req.user,
 			reviews: [],
 		})
+		await createdLibraryItem.populate('author')
 		res.status(201).json(createdLibraryItem)
 	} catch (error) {
 		res.status(500).json({error})
