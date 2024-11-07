@@ -11,6 +11,7 @@ const authRouter = require('./controllers/auth')
 const usersRouter = require('./controllers/users')
 const libraryItemsRouter = require('./controllers/library')
 const reviewRouter = require('./controllers/reviews')
+const searchRouter = require('./controllers/searchMovies')
 
 //----------------------- Server Config
 app.listen(process.env.PORT) // get PORT from .env
@@ -20,6 +21,7 @@ app.use('/auth', authRouter)
 app.use('/users', usersRouter)
 app.use('/library', libraryItemsRouter)
 app.use('/reviews', reviewRouter)
+app.use('/search-movies', searchRouter)
 mongoose.connection.on('connected', () => {
 	console.log(`Connected to ${mongoose.connection.name}.`)
 })

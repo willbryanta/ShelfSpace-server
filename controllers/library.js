@@ -110,4 +110,5 @@ router.delete('/:itemId', authenticateUser, async (req, res) => {
 		}
 	}
 })
+
 module.exports = router
