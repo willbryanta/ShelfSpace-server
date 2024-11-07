@@ -46,6 +46,7 @@ router.post('/:userId/lists', async (req, res) => {
 		}
 		targetUser.lists.push(req.body.newList)
 		await targetUser.save()
+		await targetUser.populate('lists.items')
 		res.status(201).json(targetUser.lists[targetUser.lists.length - 1])
 	} catch (error) {
 		return res

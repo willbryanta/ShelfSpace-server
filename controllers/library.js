@@ -36,13 +36,14 @@ router.get('/', async (req, res) => {
 
 router.get('/:itemId', async (req, res) => {
 	try {
-		const foundItem = await LibraryItem.findById(req.params.itemId).populate(
-			'author'
-		)
+		const foundItem = await LibraryItem.findById(req.params.itemId)
+			.populate('author')
+			.populate('reviews')
 		if (!foundItem) {
 			res.status(404)
 			throw new Error('Library item not found.')
 		}
+		await foundItem.populate('reviews.author')
 		res.status(200).json(foundItem)
 	} catch (error) {
 		if (res.statusCode === 404) {
