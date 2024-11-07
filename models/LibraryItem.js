@@ -4,20 +4,22 @@ const Review = require('./Review')
 
 const libraryItemSchema = new mongoose.Schema(
 	{
-		name: {
+		posterPath: {
+			type: String,
+		},
+		title: {
 			type: String,
 			required: true,
 		},
-		description: {
+		overview: {
 			type: String,
 		},
-		publicationDate: {
+		releaseDate: {
 			type: Date,
 			required: true,
 		},
-		author: {
-			type: mongoose.Schema.Types.ObjectId,
-			ref: 'User',
+		popularity: {
+			type: Number
 		},
 		reviews: [
 			{

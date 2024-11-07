@@ -16,6 +16,16 @@ const listSchema = new mongoose.Schema(
 	{timestamps: true}
 )
 
+const librarySchema = new mongoose.Schema(
+	{
+		items: [
+			{
+				type: mongoose.Schema.Types.ObjectId,
+				ref: 'LibraryItem',
+			},
+		]
+	})
+
 const userSchema = new mongoose.Schema(
 	{
 		username: {
@@ -27,6 +37,7 @@ const userSchema = new mongoose.Schema(
 			type: String,
 			required: true,
 		},
+		library: [librarySchema],
 		lists: [listSchema],
 	},
 	{
