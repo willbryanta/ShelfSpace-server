@@ -2,7 +2,7 @@
 
 ## Home Page
 
-![ShelfSpace Home](src/assets/ShelfSpace_home.png)
+![ShelfSpace Home](assets/ShelfSpace_home.png)
 
 Ever wanted to create a list of movies you plan on watching soon? Ever unsure whether certain movies are worth your time?
 
