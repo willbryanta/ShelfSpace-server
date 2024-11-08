@@ -4,6 +4,9 @@ const Review = require('./Review')
 
 const libraryItemSchema = new mongoose.Schema(
 	{
+		posterPath: {
+			type: String,
+		},
 		name: {
 			type: String,
 			required: true,

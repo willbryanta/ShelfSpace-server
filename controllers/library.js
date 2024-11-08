@@ -8,6 +8,7 @@ const router = express.Router()
 router.post('/', authenticateUser, async (req, res) => {
 	try {
 		const createdLibraryItem = await LibraryItem.create({
+			posterPath: req.body.posterPath,
 			name: req.body.name,
 			description: req.body.description,
 			publicationDate: req.body.publicationDate,
@@ -108,4 +109,5 @@ router.delete('/:itemId', authenticateUser, async (req, res) => {
 		}
 	}
 })
+
 module.exports = router
