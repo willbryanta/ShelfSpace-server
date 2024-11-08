@@ -55,6 +55,30 @@ router.post('/:userId/lists', async (req, res) => {
 	}
 })
 
+router.post('/:userId/lists/default', async (req, res) => {
+	try {
+		const targetUser = await User.findById(req.params.userId)
+		if (!targetUser) {
+			return res.status(404).json({error: 'user not found!'})
+		}
+		if (!targetUser.isOwner(req.user)) {
+			return res.status(403).json({
+				error: "You don't have permission to create this new list!",
+			})
+		}
+		const targetListIndex = targetUser.lists.findIndex((list) => {
+			return list.listName === 'To Watch'
+		})
+		targetUser.lists[targetListIndex].items.push(req.body.addedFilm._id)
+		await targetUser.save()
+		res.status(201).json(targetUser)
+	} catch (error) {
+		return res
+			.status(500)
+			.json({error: ' The server fell down, try again later!'})
+	}
+})
+
 router.get('/:userId/lists/:listId', async (req, res) => {
 	try {
 		const targetUser = await User.findById(req.params.userId).populate(
