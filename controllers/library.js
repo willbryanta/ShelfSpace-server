@@ -41,8 +41,7 @@ router.get('/:itemId', async (req, res) => {
 			.populate('author')
 			.populate('reviews')
 		if (!foundItem) {
-			res.status(404)
-			throw new Error('Library item not found.')
+			return res.status(404).json({error: 'Library item not found.'})
 		}
 		await foundItem.populate('reviews.author')
 		res.status(200).json(foundItem)
@@ -82,12 +81,10 @@ router.delete('/:itemId', authenticateUser, async (req, res) => {
 	try {
 		const targetLibraryItem = await LibraryItem.findById(req.params.itemId)
 		if (!targetLibraryItem) {
-			res.status(404)
-			throw new Error('Library item not found.')
+			return res.status(404).json({error: 'Library item not found.'})
 		}
-		if (!targetLibraryItem.isOwner(req.body.user)) {
-			res.status(403)
-			throw new Error('This library item does not belong to you.')
+		if (!targetLibraryItem.isOwner(req.user)) {
+			res.status(403).json({error: 'This library item does not belong to you.'})
 		}
 		//prettier-ignore
 		const deletedReviews = await Review.deleteMany({

@@ -15,7 +15,7 @@ router.post('/', authenticateUser, async (req, res) => {
 			libraryItem: req.body.libraryItem,
 		})
 		if (!createdReview) {
-			res.status(500).json({
+			return res.status(500).json({
 				error: `Unfortunately we couldn't create that review`,
 			})
 		}
@@ -70,12 +70,10 @@ router.delete('/:reviewId', authenticateUser, async (req, res) => {
 	try {
 		const targetReview = await Review.findById(req.params.reviewId)
 		if (!targetReview) {
-			res.status(404)
-			throw new Error('Review not found.')
+			return res.status(404).json({ error: 'Review not found.' })
 		}
 		if (!targetReview.isOwner(req.user)) {
-			res.status(403)
-			throw new Error('This review does not belong to you.')
+			return res.status(403).json({ error: 'This review does not belong to you.' })
 		}
 		const deletedReview = await Review.findByIdAndDelete(targetReview._id)
 		const updatedLibraryItem = await LibraryItem.findById(
