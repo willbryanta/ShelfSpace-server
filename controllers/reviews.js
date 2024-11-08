@@ -7,24 +7,23 @@ const router = express.Router()
 
 router.post('/', authenticateUser, async (req, res) => {
 	try {
-		const createdReview = Review.create({
+		const createdReview = await Review.create({
 			title: req.body.title,
 			description: req.body.description,
 			rating: req.body.rating,
-			author: req.body.author,
-			libraryItem: req.body.libraryItemId,
+			author: req.user,
+			libraryItem: req.body.libraryItem,
 		})
 		if (!createdReview) {
-			res.status(500).json({
+			return res.status(500).json({
 				error: `Unfortunately we couldn't create that review`,
 			})
 		}
-		const parentItem = await LibraryItem.findById(req.body.libraryItemId)
+		const parentItem = await LibraryItem.findById(createdReview.libraryItem)
 		parentItem.reviews.push(createdReview)
 		await parentItem.save()
 		const createdReviewAuthored = await createdReview
 			.populate('author')
-			.execPopulate()
 		res.status(200).json(createdReviewAuthored)
 	} catch (error) {
 		return res.status(500).json({error})
@@ -71,20 +70,19 @@ router.delete('/:reviewId', authenticateUser, async (req, res) => {
 	try {
 		const targetReview = await Review.findById(req.params.reviewId)
 		if (!targetReview) {
-			res.status(404)
-			throw new Error('Review not found.')
+			return res.status(404).json({ error: 'Review not found.' })
 		}
 		if (!targetReview.isOwner(req.user)) {
-			res.status(403)
-			throw new Error('This review does not belong to you.')
+			return res.status(403).json({ error: 'This review does not belong to you.' })
 		}
 		const deletedReview = await Review.findByIdAndDelete(targetReview._id)
 		const updatedLibraryItem = await LibraryItem.findById(
-			deletedReview.LibraryItem
+			deletedReview.libraryItem
 		)
 		updatedLibraryItem.reviews.pull({_id: deletedReview._id})
 		await updatedLibraryItem.save()
-		res.status(200).json(targetReview)
+		
+		res.status(200).json(deletedReview)
 	} catch (error) {
 		if (res.statusCode === 404) {
 			res.json({error})
