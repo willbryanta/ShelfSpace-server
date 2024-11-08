@@ -10,7 +10,7 @@ router.use(authenticateUser)
 
 router.get('/:userId', async (req, res) => {
 	try {
-		const user = await User.findById(req.params.userId)
+		const user = await User.findById(req.params.userId).populate('lists.items')
 		if (!user) {
 			res.status(404)
 			throw new Error('User not found')
