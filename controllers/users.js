@@ -16,6 +16,7 @@ router.get('/:userId', async (req, res) => {
 			throw new Error('User not found')
 		}
 		if (!user.isOwner(req.user)) {
+			// http 401 is a more appropriate response, as it is an unauthorised request: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/401
 			return res.status(403).json({
 				error: "Oops! It doesn't look like that belongs to you!",
 			})
@@ -33,6 +34,7 @@ router.get('/:userId', async (req, res) => {
 	}
 })
 
+// personal opinion: reading the routes below, it actually feels more 'natural' to me for list to actually be it's own entity which has a relationship with 'user'
 router.post('/:userId/lists', async (req, res) => {
 	try {
 		const targetUser = await User.findById(req.params.userId)
@@ -40,6 +42,7 @@ router.post('/:userId/lists', async (req, res) => {
 			return res.status(404).json({error: 'user not found!'})
 		}
 		if (!targetUser.isOwner(req.user)) {
+			// http 401 is a more appropriate response, as it is an unauthorised request: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/401
 			return res.status(403).json({
 				error: " You don't have permission to create this new list!",
 			})
@@ -62,11 +65,13 @@ router.post('/:userId/lists/default', async (req, res) => {
 			return res.status(404).json({error: 'user not found!'})
 		}
 		if (!targetUser.isOwner(req.user)) {
+			// http 401 is a more appropriate response, as it is an unauthorised request: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/401
 			return res.status(403).json({
 				error: "You don't have permission to create this new list!",
 			})
 		}
 		const targetListIndex = targetUser.lists.findIndex((list) => {
+			// opportunity: "To Watch" can be a constant that way there is one source of truth on the value of the default list name
 			return list.listName === 'To Watch'
 		})
 		targetUser.lists[targetListIndex].items.push(req.body.addedFilm._id)
@@ -88,6 +93,7 @@ router.get('/:userId/lists/:listId', async (req, res) => {
 			return res.status(404).json({error: 'user not found!'})
 		}
 		if (!targetUser.isOwner(req.user)) {
+			// http 401 is a more appropriate response, as it is an unauthorised request: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/401
 			return res.status(403).json({
 				error: "Oops! It doesn't look like that belongs to you!",
 			})
@@ -111,6 +117,7 @@ router.put('/:userId/lists/:listId', async (req, res) => {
 			})
 		}
 		if (!targetUser.isOwner(req.user)) {
+			// http 401 is a more appropriate response, as it is an unauthorised request: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/401
 			return res.status(403).json({
 				error: "Oops! It doesn't look like that belongs to you!",
 			})
@@ -135,6 +142,7 @@ router.delete('/:userId/lists/:listId', async (req, res) => {
 			})
 		}
 		if (!targetUser.isOwner(req.user)) {
+			// http 401 is a more appropriate response, as it is an unauthorised request: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/401
 			return res.status(403).json({
 				error: "Oops! It doesn't look like that belongs to you!",
 			})

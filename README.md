@@ -15,6 +15,8 @@ ShelfSpace is an all in one platform for keeping track of content you want to co
   - [Deployed Application](#deployed-application)
   - [Planning Materials](#planning-materials)
   - [Back-End Repository](#back-end-repository)
+  <!-- potentially another section with instructions on how to setup the repo and project locally-->
+  <!-- this is a quite common section especially for a group project. That way, new members can self onboard by following the Get Started guide :) -->
 - [Attributions](#attributions)
 - [Technologies Used](#technologies-used)
 - [Next Steps](#next-steps)

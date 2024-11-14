@@ -11,6 +11,7 @@ router.post('/signup', async (req, res) => {
 	try {
 		const userInDatabase = await User.findOne({username: req.body.username})
 		if (userInDatabase) {
+			// I love the specificity of http code 422
 			return res.status(422).json({
 				error:
 					'That username is already taken. How about trying a different one?',
@@ -51,7 +52,6 @@ router.post('/signin', async (req, res) => {
 router.put(`/:userId`, authenticateUser, async (req, res) => {
 	try {
 		const user = await User.findById(req.params.userId)
-		const nameInDatabase = await User.findOne({username: req.body.username})
 		if (!user) {
 			return res.status(404).json({error: 'User not found.'})
 		}
@@ -62,9 +62,11 @@ router.put(`/:userId`, authenticateUser, async (req, res) => {
 		}
 		if (!bcrypt.compareSync(req.body.currentPassword, user.hashedPassword)) {
 			return res
-				.status(403)
-				.json({error: 'Oh dear! That password is incorrect'})
+			.status(403)
+			.json({error: 'Oh dear! That password is incorrect'})
 		}
+		
+		const nameInDatabase = await User.findOne({username: req.body.username})
 		if (nameInDatabase && !nameInDatabase._id.equals(user._id)) {
 			return res.status(422).json({
 				error:
