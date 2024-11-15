@@ -40,6 +40,7 @@ const userSchema = new mongoose.Schema(
 )
 
 userSchema.pre('save', function (next) {
+	// opportunity: "To Watch" can be a constant that way there is one source of truth on the value of the default list name
 	const DEFAULT_LIST = "To Watch"
 	// Add default list
 	const hasDefaultList = this.lists.find(({ listName }) => listName === DEFAULT_LIST)

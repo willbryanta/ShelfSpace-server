@@ -19,8 +19,15 @@ app.use(express.json())
 app.use(cors())
 app.use('/auth', authRouter)
 app.use('/users', usersRouter)
+
+// nit pick: consider /libraryItems instead
+// given that libraryItems is more representative of the 'entity'/noun, /libraryItems might be more appropriate
+// in the future, you may reserve `library` for different communities, which your user can potentially be part of
+// within each library, there may be a different collection of `libraryItem` :) 
 app.use('/library', libraryItemsRouter)
 app.use('/reviews', reviewRouter)
+
+// nit pick: consider /movies to follow the RESTful convention
 app.use('/search-movies', searchRouter)
 mongoose.connection.on('connected', () => {
 	console.log(`Connected to ${mongoose.connection.name}.`)
